@@ -1,0 +1,62 @@
+# Docker Compose for Football Agent Microservices
+# Run with: docker-compose up --build
+
+version: '3.8'
+
+services:
+  # ============ Backend API Service ============
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: football-agent-api
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - FRONTEND_URL=http://localhost:3000
+      - GROQ_API_KEY=${GROQ_API_KEY}
+    volumes:
+      - chroma_data:/app/chroma_db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - football-network
+
+  # ============ Frontend Service ============
+  frontend:
+    build:
+      context: ./frontend-react
+      dockerfile: Dockerfile
+    container_name: football-agent-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - football-network
+
+# ============ Volumes ============
+volumes:
+  chroma_data:
+    driver: local
+
+# ============ Networks ============
+networks:
+  football-network:
+    driver: bridge
