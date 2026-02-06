@@ -1,6 +1,18 @@
-# ⚽ Football Agent
+# ⚽ Football AI Agent asistant
 
-An **agentic web application** for football analytics powered by **LangGraph**, **LangChain**, and **ChromaDB**. Built as a microservices architecture with separate backend API and frontend services.
+An **agentic web application** for football with AI assistant, where user can talk to AI assistant chatbot and ask for information or to perform various tasks. The user does not have to navigate or wander around different menu options; It asks the chatbot in natural language to perform certain task, and the agent first analyses the user request. If it's just information retrieval then it responds with the retrived information and if user requests to perform certain task (Add, update, delete etc) then chatbot prompt (with task details) for user's approval before performing it. The chatbot also shows the tasks it is currently performing in the chat and and final result after completing the task with pop-up notification. After the task is completed the UI content/rendering is updated as well.
+
+**Example queries:**
+- "Show me today's Premier League matches"
+- "Get the current league standings"
+- "Save/add Chelsea to my favorites"
+- "add Travis Kelce to my favorites"
+- "Remove Josh Allen from my favorites"
+- "Add NFL New England Patriots VS Seattle Seahawks to my calendar"
+- "Remove Virginia Cavaliers vs NC State Wolfpack from my calendar"
+
+
+The application is built as a microservices architecture with separate backend API and frontend services. The backend is developed with **LangGraph**, **LangChain**, and **ChromaDB**. LangGraph is used for building the agentic workflow. LangChain is used for tool defintion and LLM integration. ChromaDB is used as vetcor database for knowledge storage. For real-time sports (football) data open-source ESPN APIs (https://site.api.espn.com/apis/site/v2/sports/{sport}/{league}/{resource}) are used from "https://github.com/pseudo-r/Public-ESPN-API". Wrappers tools are defined around these APIs to fetch the information or to perform any task. When the use prompt for any task or information, frontend passes the request to the backend where the agent (LLM) analyses the request and call these relevant tools accordingly to perfrom the activities. After that final response is again passed to th e LLM to analyse the resaponse. The final response is then passed to the frontend, where the client renders the responds.
 
 ![Football Agent](https://img.shields.io/badge/Python-3.12+-blue.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.109+-green.svg)
@@ -32,17 +44,6 @@ An **agentic web application** for football analytics powered by **LangGraph**, 
 │                                └──────────────────┘             │
 └─────────────────────────────────────────────────────────────────┘
 ```
-
-## 🎯 What It Does
-
-Football Agent is an AI-powered assistant that understands your football-related questions in natural language and takes action to get you the information you need.
-
-**Example queries:**
-- "Show me today's Premier League matches"
-- "Compare Manchester City and Arsenal stats"
-- "Get the current league standings"
-- "Find top scorers from Liverpool"
-- "Save Chelsea to my favorites"
 
 ## ✨ Features
 
@@ -77,11 +78,8 @@ Football Agent is an AI-powered assistant that understands your football-related
 - **Knowledge Influence**: UI shows when knowledge affected results
 
 ### 5. Modern UI Design
-- 🎨 Glassmorphism effects with backdrop blur
-- 🌈 Gradient backgrounds and accents
-- ✨ Smooth CSS animations
-- 📱 Fully responsive design
-- 🌙 Dark theme optimized
+- **React 18.2**: Framework
+- **Vite 5.1**: Build Tool
 
 ## 🚀 Quick Start
  
@@ -181,7 +179,7 @@ OPENAI_MODEL=GPT-4o-mini
 
 # Backend Configuration
 BACKEND_PORT=8000
-API_URL=http://localhost:8000/api
+API_URL=http://localhost:8000/docs
 
 # Frontend Configuration  
 FRONTEND_PORT=3000
