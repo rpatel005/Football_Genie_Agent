@@ -81,7 +81,7 @@ The application is built as a microservices architecture with separate backend A
 - **React 18.2**: Framework
 - **Vite 5.1**: Build Tool
 
-## 🚀 Quick Start
+## 🚀 Quick Start/run
  
 ### One-Command Setup (Linux / macOS / Windows Git Bash)
 
@@ -95,6 +95,10 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
+# Access the app
+# Frontend: http://localhost:3000
+# Backend API: http://localhost:8000/docs
+
 The setup script will:
 - Detect your OS (Linux, macOS, Windows)
 - Check for Python 3.11+ and Node.js 18+
@@ -104,63 +108,10 @@ The setup script will:
 - Install all dependencies
 - Start backend (port 8000) and frontend (port 3000)
 
-Press `Ctrl+C` to stop all services.
-
-### Option 1: Docker Compose (Recommended)
-
-```bash
-# Clone and set up environment
-cp .env.example .env
-# Edit .env and add your GROQ_API_KEY or OPENAI_API_KEY
-
-# Run with Docker Compose
-docker-compose up --build
-
 # Access the app
-# Frontend: http://localhost:3000
-# Backend API: http://localhost:8000/docs
-```
-
-### Option 2: Manual Setup (Development)
-
-#### Terminal 1 - Backend API:
-```powershell
-# Create virtual environment
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-
-# Install dependencies
-pip install -e ".[dev]"
-
-# Set up environment
-cp .env.example .env
-# Edit .env and add your GROQ_API_KEY or OPENAI_API_KEY
-
-# Run backend
-uvicorn backend.server:app --reload --host 0.0.0.0 --port 8000
-```
-
-#### Terminal 2 - Frontend:
-```bash
-cd frontend-react
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-### Option 3: PowerShell Scripts
-
-```powershell
-# Start both services
-.\scripts\start-dev.ps1
-
-# Or start individually
-.\scripts\start-backend.ps1  # Backend on port 8000
-.\scripts\start-frontend.ps1 # Frontend on port 3000
-```
+Frontend: http://localhost:3000
+Backend API: http://localhost:8000/docs
+Press `Ctrl+C` to stop all services.
 
 ## 🔧 Configuration
 
@@ -189,16 +140,6 @@ FRONTEND_URL=http://localhost:3000
 **LLM Provider Priority:**
 1. If `GROQ_API_KEY` is set → uses Groq
 2. Else if `OPENAI_API_KEY` is set → uses OpenAI
-
-### Frontend API URL
-
-Edit `frontend/index.html` to change the backend API URL:
-
-```html
-<script>
-    window.FOOTBALL_API_URL = 'http://localhost:8000/api';
-</script>
-```
 
 ## 📁 Project Structure
 
@@ -268,56 +209,12 @@ sportsradar/
 | `GET` | `/redoc` | ReDoc API docs |
 
 ## 🧪 Running Tests
-
 ```bash
 # Run all tests
 pytest
-
 # Run with coverage
 pytest --cov=backend --cov-report=html
-
-# Run specific test file
-pytest tests/test_api.py -v
-
-# Run with verbose output
-pytest -v --tb=short
 ```
-
-## 🐳 Docker Deployment
-
-### Build and Run
-```bash
-# Build and start all services
-docker-compose up --build
-
-# Run in background
-docker-compose up -d --build
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
-```
-
-### Individual Containers
-```bash
-# Build backend
-docker build -t football-agent-api -f backend/Dockerfile .
-
-# Build frontend
-docker build -t football-agent-frontend -f frontend/Dockerfile frontend/
-
-# Run backend (with Groq)
-docker run -p 8000:8000 -e GROQ_API_KEY=your_key football-agent-api
-
-# Or with OpenAI
-docker run -p 8000:8000 -e OPENAI_API_KEY=your_key football-agent-api
-
-# Run frontend
-docker run -p 3000:3000 football-agent-frontend
-```
-
 ## 🔧 Tech Stack
 
 ### Backend
@@ -339,7 +236,7 @@ docker run -p 3000:3000 football-agent-frontend
 - **Docker** - Containerization
 - **Docker Compose** - Service orchestration
 
-## ⚖️ Tradeoffs & Design Decisions
+## ⚖️ Tradeoffs & next steps
 
 ### Why Microservices?
 - **Independent Scaling**: Scale backend and frontend separately
@@ -351,6 +248,20 @@ docker run -p 3000:3000 football-agent-frontend
 - **Groq**: fast inference for LLMs (recommended) and Free but limited tokens/uses.
 - **OpenAI**: GPT-4o for high quality responses but paid.
 - **LangGraph**: Stateful agent workflows with proper tool handling
+
+### Next Steps
+
+| Priority | Feature | Description |
+|----------|---------|-------------|
+| 🔴 High | **User Authentication** | Add JWT-based auth with login/signup for personalized experiences |
+| 🔴 High | **WebSocket Integration** | Real-time match updates and live score notifications |
+| 🟡 Medium | **Multi-League Expansion** | Support for NBA, MLB, NHL, and international leagues |
+| 🟡 Medium | **Advanced Analytics** | Player performance predictions using ML models |
+| 🟡 Medium | **PWA Support** | Convert to Progressive Web App for mobile installation |
+| 🟢 Low | **CI/CD Pipeline** | GitHub Actions for automated testing and deployment |
+| 🟢 Low | **Caching Layer** | Redis caching for API responses to improve performance |
+| 🟢 Low | **Multi-language Support** | i18n for Spanish, French, German interfaces |
+| 🟢 Low | **Voice Interface** | Speech-to-text for hands-free queries |
 
 ---
 
