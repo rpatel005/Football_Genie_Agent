@@ -22,3 +22,7 @@ wheels/
 
 # ChromaDB data (regenerated on startup)
 chroma_db/
+
+# Node modules
+node_modules/
+frontend-react/node_modules/

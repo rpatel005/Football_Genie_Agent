@@ -68,13 +68,17 @@ setup_env() {
         if [ -f ".env.example" ]; then
             cp .env.example .env
             print_warning ".env file created from .env.example"
-            print_warning "Please add your GROQ_API_KEY to .env"
+            print_warning "Please add your LLM API key (Groq or OpenAI) to .env"
             echo ""
-            read -p "Do you want to enter your GROQ_API_KEY now? (y/n): " answer
-            if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+            echo "The agent supports two LLM providers:"
+            echo "  1) Groq (faster, recommended)"
+            echo "  2) OpenAI (GPT-4o)"
+            echo ""
+            read -p "Which provider do you want to use? (1/2): " provider_choice
+            
+            if [ "$provider_choice" = "1" ]; then
                 read -p "Enter your GROQ_API_KEY: " api_key
                 if [ -n "$api_key" ]; then
-                    # Cross-platform sed
                     if [[ "$(detect_os)" == "mac" ]]; then
                         sed -i '' "s|your_groq_api_key_here|$api_key|g" .env
                     else
@@ -82,6 +86,18 @@ setup_env() {
                     fi
                     print_success "GROQ_API_KEY saved to .env"
                 fi
+            elif [ "$provider_choice" = "2" ]; then
+                read -p "Enter your OPENAI_API_KEY: " api_key
+                if [ -n "$api_key" ]; then
+                    if [[ "$(detect_os)" == "mac" ]]; then
+                        sed -i '' "s|your_openai_api_key_here|$api_key|g" .env
+                    else
+                        sed -i "s|your_openai_api_key_here|$api_key|g" .env
+                    fi
+                    print_success "OPENAI_API_KEY saved to .env"
+                fi
+            else
+                print_warning "Skipped. Please manually add your API key to .env"
             fi
         else
             print_error ".env.example not found!"

@@ -22,7 +22,7 @@ An **agentic web application** for football analytics powered by **LangGraph**, 
 │   │  • Glassmorphism │         │  • LangGraph Agent       │     │
 │   │  • Responsive    │         │  • LangChain Tools       │     │
 │   └──────────────────┘         │  • ChromaDB Vector Store │     │
-│                                │  • Groq LLM              │     │
+│                                │  • Groq / OpenAI LLM     │     │
 │                                └──────────────────────────┘     │
 │                                           │                      │
 │                                           ▼                      │
@@ -47,7 +47,7 @@ Football Agent is an AI-powered assistant that understands your football-related
 ## ✨ Features
 
 ### 1. LangGraph Agent
-- **Natural Language Understanding**: Powered by Groq LLM (llama-3.3-70b)
+- **Natural Language Understanding**: Supports Groq or OpenAI LLMs
 - **Stateful Workflows**: LangGraph manages conversation state
 - **Tool Execution**: 6 LangChain tools for football data
 - **Semantic Search**: ChromaDB vector store for knowledge retrieval
@@ -101,7 +101,7 @@ The setup script will:
 - Detect your OS (Linux, macOS, Windows)
 - Check for Python 3.11+ and Node.js 18+
 - Create `.env` from `.env.example`
-- Prompt for your `GROQ_API_KEY`
+- Prompt for your LLM API key (Groq or OpenAI)
 - Create Python virtual environment
 - Install all dependencies
 - Start backend (port 8000) and frontend (port 3000)
@@ -113,7 +113,7 @@ Press `Ctrl+C` to stop all services.
 ```bash
 # Clone and set up environment
 cp .env.example .env
-# Edit .env and add your GROQ_API_KEY
+# Edit .env and add your GROQ_API_KEY or OPENAI_API_KEY
 
 # Run with Docker Compose
 docker-compose up --build
@@ -136,7 +136,7 @@ pip install -e ".[dev]"
 
 # Set up environment
 cp .env.example .env
-# Edit .env and add your GROQ_API_KEY
+# Edit .env and add your GROQ_API_KEY or OPENAI_API_KEY
 
 # Run backend
 uvicorn backend.server:app --reload --host 0.0.0.0 --port 8000
@@ -171,8 +171,13 @@ npm run dev
 Create a `.env` file in the root directory:
 
 ```env
-# Required
+# LLM API Keys (set at least one - Groq is checked first)
 GROQ_API_KEY=your_groq_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Model names (optional - defaults provided)
+GROQ_MODEL=qwen/qwen3-32b-instant
+OPENAI_MODEL=gpt-4o
 
 # Backend Configuration
 BACKEND_PORT=8000
@@ -182,6 +187,10 @@ API_URL=http://localhost:8000/api
 FRONTEND_PORT=3000
 FRONTEND_URL=http://localhost:3000
 ```
+
+**LLM Provider Priority:**
+1. If `GROQ_API_KEY` is set → uses Groq
+2. Else if `OPENAI_API_KEY` is set → uses OpenAI
 
 ### Frontend API URL
 
@@ -301,8 +310,11 @@ docker build -t football-agent-api -f backend/Dockerfile .
 # Build frontend
 docker build -t football-agent-frontend -f frontend/Dockerfile frontend/
 
-# Run backend
+# Run backend (with Groq)
 docker run -p 8000:8000 -e GROQ_API_KEY=your_key football-agent-api
+
+# Or with OpenAI
+docker run -p 8000:8000 -e OPENAI_API_KEY=your_key football-agent-api
 
 # Run frontend
 docker run -p 3000:3000 football-agent-frontend
@@ -316,6 +328,7 @@ docker run -p 3000:3000 football-agent-frontend
 - **LangGraph** - Agent workflow orchestration
 - **LangChain** - Tool definitions & LLM integration
 - **LangChain-Groq** - Groq LLM provider
+- **LangChain-OpenAI** - OpenAI LLM provider
 - **ChromaDB** - Vector database
 - **Pydantic** - Data validation
 - **Uvicorn** - ASGI server
@@ -336,22 +349,10 @@ docker run -p 3000:3000 football-agent-frontend
 - **Development Workflow**: Teams can work independently
 - **Deployment Options**: Deploy to different services/hosts
 
-### Why LangGraph + Groq?
-- **Groq**: Extremely fast inference for LLMs
+### Why LangGraph + Groq/OpenAI?
+- **Groq**: fast inference for LLMs (recommended) and Free but limited tokens/uses.
+- **OpenAI**: GPT-4o for high quality responses but paid.
 - **LangGraph**: Stateful agent workflows with proper tool handling
-- **LangChain**: Industry-standard tool definitions
-
-### Future Improvements
-1. **Real APIs**: Integrate football-data.org or API-Football
-2. **Authentication**: User accounts with JWT tokens
-3. **Caching**: Redis for API response caching
-4. **Real-time**: WebSocket for live match updates
-5. **Kubernetes**: Production-grade orchestration
-6. **Monitoring**: Prometheus + Grafana dashboards
-
-## 📜 License
-
-MIT License - feel free to use and modify!
 
 ---
 

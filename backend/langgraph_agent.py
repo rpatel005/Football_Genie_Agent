@@ -28,6 +28,7 @@ from langgraph.prebuilt import ToolNode
 from langgraph.graph.message import add_messages
 from langgraph.checkpoint.memory import MemorySaver
 from pydantic import BaseModel, Field
+from langchain_openai import ChatOpenAI
 
 from .langchain_tools import FOOTBALL_TOOLS, APPROVAL_REQUIRED_TOOLS
 from .vector_store import vector_store
@@ -38,7 +39,6 @@ os.environ["LANGSMITH_TRACING"] = "true"
 os.environ["LANGSMITH_PROJECT"] = "TestProject"
 os.environ["LANGSMITH_ENDPOINT"] = "https://eu.api.smith.langchain.com"
 os.environ["LANGSMITH_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
-print(f"Loaded GROQ: { os.getenv('GROQ_API_KEY')}")
 
 
 # ============ State Definition ============
@@ -96,41 +96,57 @@ class FootballAgentGraph:
     Implements a stateful, multi-step agent with tool execution.
     """
     
-    def __init__(self, model_name: str = "qwen/qwen3-32b"):
+    def __init__(self, model_name: str = None):
         """
         Initialize the agent graph.
         
         Args:
-            model_name: Groq model to use (e.g., llama-3.3-70b-versatile, mixtral-8x7b-32768)
+            model_name: Model to use (auto-detected from env if not provided)
         """
-        self.model_name = model_name
         self.sessions: Dict[str, Any] = {}
         self.memory = MemorySaver()
         
-        # Check for API key
-        self.api_key = os.getenv("GROQ_API_KEY") #or os.getenv("GOOGLE_API_KEY")
-        #self.api_key = os.getenv("GOOGLE_API_KEY")
+        # Determine LLM provider based on available API keys
+        self.groq_api_key = os.getenv("GROQ_API_KEY")
+        self.openai_api_key = os.getenv("OPENAI_API_KEY")
+        
+        if self.groq_api_key:
+            self.llm_provider = "groq"
+            self.api_key = self.groq_api_key
+            self.model_name = model_name or os.getenv("GROQ_MODEL", "qwen/qwen3-32b-instant")
+            print(f"✅ Using Groq LLM with model: {self.model_name}")
+        elif self.openai_api_key:
+            self.llm_provider = "openai"
+            self.api_key = self.openai_api_key
+            self.model_name = model_name or os.getenv("OPENAI_MODEL", "gpt-4o")
+            print(f"✅ Using OpenAI LLM with model: {self.model_name}")
+        else:
+            self.llm_provider = None
+            self.api_key = None
+            self.model_name = None
+        
         self.use_llm = bool(self.api_key)
         
         if self.use_llm:
             self._setup_llm_agent()
         else:
-            print("⚠️ GROQ_API_KEY not set. Please add it to your .env file.")
+            print("⚠️ No LLM API key found. Please set GROQ_API_KEY or OPENAI_API_KEY in your .env file.")
     
     def _setup_llm_agent(self):
         """Set up the LLM-based agent with LangGraph."""
-        # Initialize Groq LLM with tools
-        self.llm = ChatGroq(
-            model=self.model_name,
-            temperature=0,
-            groq_api_key=self.api_key
-        )
-        # from langchain_openai import ChatOpenAI
-        # self.llm = ChatOpenAI(
-        #     model="gpt-4o",
-        #     temperature=0,   
-        #     api_key=self.api_key   
-        # )
+        # Initialize LLM based on provider
+        if self.llm_provider == "groq":
+            self.llm = ChatGroq(
+                model=self.model_name,
+                temperature=0,
+                groq_api_key=self.api_key
+            )
+        elif self.llm_provider == "openai":
+            self.llm = ChatOpenAI(
+                model=self.model_name,
+                temperature=0,
+                api_key=self.api_key
+            )
         self.llm_with_tools = self.llm.bind_tools(FOOTBALL_TOOLS)
         
         # Build the graph
@@ -475,7 +491,7 @@ class FootballAgentGraph:
             logger.error(f"❌ LLM processing failed: {e}")
             return {
                 "session_id": session_id,
-                "response": f"I encountered an error processing your request. Please ensure your OPENAI_API_KEY is valid. Error: {str(e)[:100]}",
+                "response": f"I encountered an error processing your request. Please ensure your LLM API key is valid. Error: {str(e)[:100]}",
                 "tool_results": [],
                 "pending_approval": None,
                 "client_actions": [],
@@ -503,7 +519,7 @@ class FootballAgentGraph:
         if not self.use_llm:
             return {
                 "session_id": session_id,
-                "response": "Cannot approve actions without a valid GROQ_API_KEY.",
+                "response": "Cannot approve actions without a valid LLM API key.",
                 "approved": False,
                 "tool_results": [],
                 "pending_approval": None,

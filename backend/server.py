@@ -46,9 +46,9 @@ async def lifespan(app: FastAPI):
     print("📚 ChromaDB vector store initialized")
     print("🏈 Leagues: NFL, College Football, CFL, XFL, USFL")
     if langgraph_agent.use_llm:
-        print("✅ GROQ_API_KEY found - using Groq LLM")
+        print(f"✅ LLM configured: {langgraph_agent.llm_provider.upper()} ({langgraph_agent.model_name})")
     else:
-        print("⚠️ No GROQ_API_KEY - agent will provide helpful error messages")
+        print("⚠️ No LLM API key found - agent will provide helpful error messages")
     print("=" * 50)
     yield
     # Shutdown
