@@ -219,10 +219,6 @@ pytest --cov=backend --cov-report=html
 - **HTML5/CSS3/JavaScript** - Core web technologies
 - **ReactJs** - Modern UI aesthetics
 
-### Infrastructure
-- **Docker** - Containerization
-- **Docker Compose** - Service orchestration
-
 ## ⚖️ Tradeoffs & next steps
 
 ### Why Microservices?
