@@ -94,11 +94,6 @@ cd Football_Genie_Agent
 chmod +x setup.sh
 ./setup.sh
 ```
-
-# Access the app
-# Frontend: http://localhost:3000
-# Backend API: http://localhost:8000/docs
-
 The setup script will:
 - Detect your OS (Linux, macOS, Windows)
 - Check for Python 3.11+ and Node.js 18+
@@ -199,14 +194,6 @@ sportsradar/
 | `GET` | `/api/knowledge/search` | Semantic search |
 | `GET` | `/api/knowledge/favorites` | Get favorite teams |
 | `GET` | `/api/knowledge/history` | Get search history |
-
-### Utility Endpoints
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/tools` | Available tools info |
-| `GET` | `/api/health` | Health check |
-| `GET` | `/docs` | Swagger API docs |
-| `GET` | `/redoc` | ReDoc API docs |
 
 ## 🧪 Running Tests
 ```bash
