@@ -89,8 +89,8 @@ Football Agent is an AI-powered assistant that understands your football-related
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/sportsradar.git
-cd sportsradar
+git clone git@github.com:rpatel005/Football_Genie_Agent.git
+cd Football_Genie_Agent
 
 # Run the setup script
 chmod +x setup.sh
@@ -176,8 +176,8 @@ GROQ_API_KEY=your_groq_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here
 
 # Model names (optional - defaults provided)
-GROQ_MODEL=qwen/qwen3-32b-instant
-OPENAI_MODEL=gpt-4o
+GROQ_MODEL=qwen/qwen3-32b
+OPENAI_MODEL=GPT-4o-mini
 
 # Backend Configuration
 BACKEND_PORT=8000

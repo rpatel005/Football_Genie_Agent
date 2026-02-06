@@ -113,7 +113,7 @@ class FootballAgentGraph:
         if self.groq_api_key:
             self.llm_provider = "groq"
             self.api_key = self.groq_api_key
-            self.model_name = model_name or os.getenv("GROQ_MODEL", "qwen/qwen3-32b-instant")
+            self.model_name = model_name or os.getenv("GROQ_MODEL", "qwen/qwen3-32b")
             print(f"✅ Using Groq LLM with model: {self.model_name}")
         elif self.openai_api_key:
             self.llm_provider = "openai"
